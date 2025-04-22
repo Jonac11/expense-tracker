@@ -168,20 +168,45 @@ def export_to_csv():
         writer.writerows(rows)
 
     print("Exported to expenses_export.csv")
+    
+    
 
+def main():
+    init_db()
+    while True:
+        print("\n--- Expense Tracker Menu ---")
+        print("1. Add Expense")
+        print("2. View All")
+        print("3. Filter Expenses")
+        print("4. Show Summary")
+        print("5. Bar Chart")
+        print("6. Pie Chart")
+        print("7. Export to CSV")
+        print("8. Exit")
 
-
-   
-
+        choice = input("Choose (1–8): ")
+        if choice == "1":
+            add_expense()
+        elif choice == "2":
+            view_expenses()
+        elif choice == "3":
+            filter_expenses()
+        elif choice == "4":
+            show_summary()
+        elif choice == "5":
+            plot_bar_chart()
+        elif choice == "6":
+            plot_pie_chart()
+        elif choice == "7":
+            export_to_csv()
+        elif choice == "8":
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice.")
 
 if __name__ == "__main__":
-    init_db()
-    #add_expense()
-    #view_expenses()
-    #filter_expenses()
-    #show_summary() 
-    #plot_bar_chart()
-    #plot_pie_chart()
-    export_to_csv()
+    main()
+
         
     
