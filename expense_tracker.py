@@ -1,5 +1,7 @@
 import sqlite3
 from datetime import datetime
+import matplotlib.pyplot as plt # type: ignore
+
 
 # SQLite Database and expenses table
 
@@ -22,7 +24,7 @@ def init_db():
 
 def add_expense():
     amount = float(input("Amount ($): "))
-    category = input("Category: ")
+    category = input("Category: ").strip().capitalize()
     date = input("Date (YYYY-MM-DD, Enter for today): ") or datetime.today().strftime('%Y-%m-%d')
     notes = input("Reminder (opt): ")
 
@@ -61,14 +63,14 @@ def filter_expenses():
             # Convert to DB-friendly format
             date = datetime.strptime(date_input, "%d-%m-%Y").strftime("%Y-%m-%d")
         except ValueError:
-            print("❌ Invalid date format. Please use DD-MM-YYYY.")
+            print(" Invalid date format. Please use DD-MM-YYYY.")
             return
 
     query = "SELECT * FROM expenses WHERE 1=1"
     params = []
 
     if category:
-        query += " AND category = ?"
+        query += " AND LOWER(category) = ?"
         params.append(category)
     if date:
         query += " AND date = ?"
@@ -104,14 +106,37 @@ def show_summary():
     for row in cursor.fetchall():
         print(f"{row[0]}: ${row[1]:.2f}")
     conn.close()
+    
+def plot_bar_chart():
+    conn = sqlite3.connect('expenses.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT category, SUM(amount) FROM expenses GROUP BY category")
+    data = cursor.fetchall()
+    conn.close()
+
+    if not data:
+        print(" No data to plot.")
+        return
+
+    categories = [row[0] for row in data]
+    amounts = [row[1] for row in data]
+
+    plt.bar(categories, amounts)
+    plt.xlabel('Category')
+    plt.ylabel('Total ($)')
+    plt.title('Spending by Category')
+    plt.tight_layout()
+    plt.show()
+
    
 
 
 if __name__ == "__main__":
-    #init_db()
+    init_db()
     #add_expense()
     #view_expenses()
     #filter_expenses()
-    show_summary() 
+    #show_summary() 
+    plot_bar_chart()
         
     
