@@ -150,6 +150,25 @@ def plot_pie_chart():
     plt.title('Spending Breakdown')
     plt.tight_layout()
     plt.show()
+    
+    # Add CSV export
+    
+import csv
+
+def export_to_csv():
+    conn = sqlite3.connect('expenses.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM expenses")
+    rows = cursor.fetchall()
+    conn.close()
+
+    with open('expenses_export.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['ID', 'Amount', 'Category', 'Date', 'Notes'])
+        writer.writerows(rows)
+
+    print("Exported to expenses_export.csv")
+
 
 
    
@@ -162,6 +181,7 @@ if __name__ == "__main__":
     #filter_expenses()
     #show_summary() 
     #plot_bar_chart()
-    plot_pie_chart()
+    #plot_pie_chart()
+    export_to_csv()
         
     
