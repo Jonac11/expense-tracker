@@ -107,6 +107,8 @@ def show_summary():
         print(f"{row[0]}: ${row[1]:.2f}")
     conn.close()
     
+    # Add bar chart
+    
 def plot_bar_chart():
     conn = sqlite3.connect('expenses.db')
     cursor = conn.cursor()
@@ -127,6 +129,28 @@ def plot_bar_chart():
     plt.title('Spending by Category')
     plt.tight_layout()
     plt.show()
+    
+    # Add pie chart
+    
+def plot_pie_chart():
+    conn = sqlite3.connect('expenses.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT category, SUM(amount) FROM expenses GROUP BY category")
+    data = cursor.fetchall()
+    conn.close()
+
+    if not data:
+        print(" No data to plot.")
+        return
+
+    categories = [row[0] for row in data]
+    amounts = [row[1] for row in data]
+
+    plt.pie(amounts, labels=categories, autopct='%1.1f%%')
+    plt.title('Spending Breakdown')
+    plt.tight_layout()
+    plt.show()
+
 
    
 
@@ -137,6 +161,7 @@ if __name__ == "__main__":
     #view_expenses()
     #filter_expenses()
     #show_summary() 
-    plot_bar_chart()
+    #plot_bar_chart()
+    plot_pie_chart()
         
     
