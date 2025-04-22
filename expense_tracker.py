@@ -33,7 +33,22 @@ def add_expense():
     conn.commit()
     conn.close()
     print("Expense added.")
+    
+# function to view expenses
+
+def view_expenses():
+    conn = sqlite3.connect('expenses.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM expenses")
+    rows = cursor.fetchall()
+    conn.close()
+
+    print("\n--- All Expenses ---")
+    for row in rows:
+        print(f"{row[0]} | ${row[1]:.2f} | {row[2]} | {row[3]} | {row[4]}")
+
 
 if __name__ == "__main__":
     init_db()
     add_expense()
+    view_expenses()
