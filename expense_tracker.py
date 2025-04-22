@@ -34,7 +34,7 @@ def add_expense():
     conn.close()
     print("Expense added.")
     
-# function to view expenses
+# viewing all expenses
 
 def view_expenses():
     conn = sqlite3.connect('expenses.db')
@@ -48,7 +48,52 @@ def view_expenses():
         print(f"{row[0]} | ${row[1]:.2f} | {row[2]} | {row[3]} | {row[4]}")
 
 
+#Filtering by category and date
+
+def filter_expenses():
+    print("Leave a field blank to skip filtering it.")
+    category = input("Filter by category: ").strip()
+    date_input = input("Filter by date (DD-MM-YYYY): ").strip()
+
+    date = None
+    if date_input:
+        try:
+            # Convert to DB-friendly format
+            date = datetime.strptime(date_input, "%d-%m-%Y").strftime("%Y-%m-%d")
+        except ValueError:
+            print("❌ Invalid date format. Please use DD-MM-YYYY.")
+            return
+
+    query = "SELECT * FROM expenses WHERE 1=1"
+    params = []
+
+    if category:
+        query += " AND category = ?"
+        params.append(category)
+    if date:
+        query += " AND date = ?"
+        params.append(date)
+
+    conn = sqlite3.connect('expenses.db')
+    cursor = conn.cursor()
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+
+    print("\n--- Filtered Expenses ---")
+    if not rows:
+        print("No matching expenses found.")
+    for row in rows:
+        try:
+            formatted_date = datetime.strptime(row[3], "%Y-%m-%d").strftime("%d-%m-%Y")
+        except ValueError:
+            formatted_date = row[3]  # fallback to raw value if format is off
+        print(f"{row[0]} | ${row[1]:.2f} | {row[2]} | {formatted_date} | {row[4]}")
+
+
 if __name__ == "__main__":
     init_db()
-    add_expense()
-    view_expenses()
+   # add_expense()
+   # view_expenses()
+    filter_expenses()
+    
