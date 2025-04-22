@@ -87,13 +87,31 @@ def filter_expenses():
         try:
             formatted_date = datetime.strptime(row[3], "%Y-%m-%d").strftime("%d-%m-%Y")
         except ValueError:
-            formatted_date = row[3]  # fallback to raw value if format is off
+            formatted_date = row[3] 
         print(f"{row[0]} | ${row[1]:.2f} | {row[2]} | {formatted_date} | {row[4]}")
+        
+    # Spending summary
+    
+def show_summary():
+    conn = sqlite3.connect('expenses.db')
+    cursor = conn.cursor()
+    cursor.execute("SELECT SUM(amount) FROM expenses")
+    total = cursor.fetchone()[0] or 0
+    print(f"Total Spent: ${total:.2f}")
+
+    cursor.execute("SELECT category, SUM(amount) FROM expenses GROUP BY category")
+    print("Spending by Category:")
+    for row in cursor.fetchall():
+        print(f"{row[0]}: ${row[1]:.2f}")
+    conn.close()
+   
 
 
 if __name__ == "__main__":
-    init_db()
-   # add_expense()
-   # view_expenses()
-    filter_expenses()
+    #init_db()
+    #add_expense()
+    #view_expenses()
+    #filter_expenses()
+    show_summary() 
+        
     
